@@ -1,5 +1,6 @@
 from flask import Blueprint, abort, jsonify, request
 import urllib
+from util import filter_actors_helper
 
 
 def construct_actor_blueprint(graph_data):
@@ -18,13 +19,11 @@ def construct_actor_blueprint(graph_data):
 	def get_actors():
 		query = request.query_string
 		query = urllib.unquote(query)
-		# TODO: move this method out into util
-		if '&' in query:
-			return query.split('&')[0]
-		elif '|' in query:
-			return query.split('|')[0]
-		else:
-			return query
+		movies = filter_actors_helper(query, graph_data[0])
+		if movies is None:
+			# TODO: more detailed error message
+			abort(400)
+		return jsonify(movies), 200
 
 	@actor_blueprint.route('/api/actors/<string:actor_name>', methods=['PUT'])
 	def put_actor(actor_name):

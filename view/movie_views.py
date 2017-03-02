@@ -1,5 +1,5 @@
 from flask import Blueprint, abort, jsonify, request
-from util import apply_filter_movies, filter_movies_helper
+from util import filter_movies_helper
 import urllib
 
 def construct_movie_blueprint(graph_data):
