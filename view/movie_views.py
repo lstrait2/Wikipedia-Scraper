@@ -1,4 +1,5 @@
 from flask import Blueprint, abort, jsonify, request
+from util import apply_filter_movies, filter_movies_helper
 import urllib
 
 def construct_movie_blueprint(graph_data):
@@ -17,14 +18,11 @@ def construct_movie_blueprint(graph_data):
 	def get_movies():
 		query = request.query_string
 		query = urllib.unquote(query)
-		#TODO: move this method out into util
-		#TODO: recursively split on booleans, keep filtering (make copy each time)
-		if '&' in query:
-			return query.split('&')[0]
-		elif '|' in query:
-			return query.split('|')[0]
-		else:
-			return query
+		movies = filter_movies_helper(query, graph_data[1])
+		if movies is None:
+			#TODO: more detailed error message
+			abort(400)
+		return jsonify(movies), 200
 
 	@movie_blueprint .route('/api/movies/<string:movie_name>', methods=['PUT'])
 	def put_movie(movie_name):
