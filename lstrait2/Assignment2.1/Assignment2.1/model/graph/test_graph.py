@@ -180,7 +180,47 @@ class GraphTests(unittest.TestCase):
 		j = self.g.bfs(other, first.name)
 		self.assertEqual(j, 2)
 
+	# Test top 5 hub actors
+	def test_hub_actors(self):
+		# select top 5 hub actors
+		hub_actors = self.g.get_hub_actors(5)
+		# top actor should be Bruce willis
+		self.assertEqual(hub_actors[-1][0], 'Bruce Willis')
+		self.assertEqual(hub_actors[-1][1], 305)
+		# second to top is Jack Warden
+		self.assertEqual(hub_actors[-2][0], 'Jack Warden')
+		self.assertEqual(hub_actors[-2][1], 39)
 
+	# Test getting hub actors with larger parameter
+	def test_hub_actors_large(self):
+		# select top 5 hub actors
+		hub_actors = self.g.get_hub_actors(500)
+		# top actor should still be Bruce willis
+		self.assertEqual(hub_actors[-1][0], 'Bruce Willis')
+		self.assertEqual(hub_actors[-1][1], 305)
+		# Multiple bottom individuals with no connections
+		self.assertEqual(hub_actors[0][1], 0)
+
+	# Test hub actors with invalid param
+	def test_hub_actors_invalid(self):
+		hub_actors = self.g.get_hub_actors(-15)
+		self.assertEqual(hub_actors, [])
+
+	# Test gross for age group
+	def test_get_gross_for_age_group(self):
+		gross = self.g.get_gross_for_age_group(60, 69)
+		self.assertEqual(gross, 1005773688)
+		gross2 = self.g.get_gross_for_age_group(20, 29)
+		self.assertEqual(gross2, 21767523)
+
+	# Test gross for invalid age group
+	def test_get_gross_for_age_group_invalid(self):
+		# start age larger than end
+		gross = self.g.get_gross_for_age_group(69, 60)
+		self.assertEqual(gross, 0)
+		# no actors in age group
+		gross = self.g.get_gross_for_age_group(100, 150)
+		self.assertEqual(gross, 0)
 
 if __name__ == '__main__':
 	unittest.main()
