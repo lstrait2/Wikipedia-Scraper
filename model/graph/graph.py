@@ -76,9 +76,29 @@ class Graph(object):
 		# visit neighbors if not visited
 		for neighbor_node in node.neighbors.keys():
 			if not neighbor_node.visited:
-
-
 				self.dfs_helper(neighbor_node)
+
+	def bfs(self, node, target):
+		# store a list of seen nodes and queue of active nodes
+		seen = set()
+		queue = [None, node]
+		depth = 0
+		while len(queue) > 0:
+			curr_node = queue.pop()
+			# end of current level
+			if curr_node is None:
+				depth += 1
+				queue.insert(0, None)
+				if queue[-1] is None:
+					return -1 # could not find in the graph
+				continue
+			# found target, return level
+			if curr_node.name == target:
+				return int(depth/2) # we don't want to count steps on movie nodes
+			seen.add(curr_node)
+			for next_node in curr_node.neighbors.keys():
+				if next_node not in seen:
+					queue.insert(0, next_node)
 
 	def to_json(self):
 		""" convert graph to JSON
@@ -177,11 +197,10 @@ class Graph(object):
 
 	def get_actors_from_year(self ,year):
 		""" create list of all actors who appeared in a given year
-		
+
 		:param year: year to select actors from
 
 		:return: a list of actors from that year
-
 		"""
 		actors_from_year = set()
 		# get all movies for the given year

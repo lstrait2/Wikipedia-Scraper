@@ -22,7 +22,8 @@ class ActorNode(object):
 		:param movie_node: movie to attempt to add as a neighbor
 
 		"""
-		if self in movie_node.neighbors.keys():
+
+		if movie_node.name in self.movies or self.name in movie_node.actors:
 			# weight of edge is age of actor times gross of movie
 			self.neighbors[movie_node] = (movie_node.get_gross() * self.age)
 
@@ -82,7 +83,7 @@ class MovieNode(object):
 		:param actor_node: actor to attempt to add as neighbor
 
 		"""
-		if actor_node.name in self.actors:
+		if actor_node.name in self.actors or self.name in actor_node.movies:
 			# weight of edge is age of actor times gross of movie
 			self.neighbors[actor_node] = (actor_node.age * self.gross)
 
