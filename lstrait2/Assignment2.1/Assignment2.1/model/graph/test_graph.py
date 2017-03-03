@@ -26,7 +26,7 @@ class GraphTests(unittest.TestCase):
 			if 'Blind Date' in movie.name:
 				blind_date = movie
 		# christian bale has 10 movies in test set
-		self.assertEqual(len(bruce_willis.neighbors),53)
+		self.assertEqual(len(bruce_willis.neighbors), 91)
 		# both edge directions should have correct weight
 		self.assertIn(bruce_willis.age * blind_date.gross, bruce_willis.neighbors.values())
 		self.assertIn(bruce_willis.age * blind_date.gross, blind_date.neighbors.values())
@@ -91,8 +91,8 @@ class GraphTests(unittest.TestCase):
 	# look for actors in year with a lot of movies
 	def test_actors_from_year_large(self):
 		actor_names = self.g.get_actors_from_year(2015)
-		# 72 actors in test set from 2015 movies
-		self.assertEqual(len(actor_names), 8)
+		# 10 actors in test set from 2015 movies
+		self.assertEqual(len(actor_names), 10)
 		# two of these actors should be Danny McBride and Bruce Willis
 		self.assertIn('Bruce Willis', actor_names)
 		self.assertIn('Danny McBride', actor_names)
@@ -115,7 +115,6 @@ class GraphTests(unittest.TestCase):
 		# choose number larger than set
 		top_actors = self.g.get_top_X_grossing_actors(100000)
 		# top grossing actor in test set is Bruce Willis
-		print len(top_actors)
 		self.assertEqual('Bruce Willis', top_actors[308][0])
 		self.assertEqual(562709189, top_actors[308][1])
 		# second top grossing actor is Faye Dunaway
@@ -132,6 +131,54 @@ class GraphTests(unittest.TestCase):
 			self.assertTrue(actor_node.visited)
 		for movie_node in self.g.movie_vertices:
 			self.assertTrue(movie_node.visited)
+
+	# Test BFS traversal w/ a depth 1
+	def test_bfs_d1(self):
+		for actor in self.g.actor_vertices:
+			if actor.name == 'Bruce Willis':
+				bruce_willis = actor
+			if actor.name == 'Kim Basinger':
+				kim_bas = actor
+		i = self.g.bfs(bruce_willis, kim_bas.name)
+		# shortest path should have length 2
+		self.assertEqual(i, 1)
+
+	# Test BFS traversal w/ a larger depth
+	def test_bfs_d2(self):
+		for actor in self.g.actor_vertices:
+			if actor.name == 'Kirstie Alley':
+				bruce_willis = actor
+			if actor.name == 'John Pankow':
+				other = actor
+		i = self.g.bfs(bruce_willis, other.name)
+		# shortest path should have length 2
+		self.assertEqual(i, 2)
+		# lengths should be reciprocal
+		j = self.g.bfs(other, bruce_willis.name)
+		self.assertEqual(j,2)
+
+	# Test nodes not reachable
+	def test_bfs_unreachabel(self):
+		for actor in self.g.actor_vertices:
+			if actor.name == 'Bruce Willis':
+				bruce_willis = actor
+		i = self.g.bfs(bruce_willis, 'Not an Actor')
+		# -1 should be returned
+		self.assertEqual(i, -1)
+
+	# Test BFS traversal w/ a larger depth
+	def test_bfs_d3(self):
+		for actor in self.g.actor_vertices:
+			if actor.name == 'Danny Aiello':
+				first = actor
+			if actor.name == 'Kirstie Alley':
+				other = actor
+		i = self.g.bfs(first, other.name)
+		# shortest path should have length 2
+		self.assertEqual(i, 2)
+		# lengths should be reciprocal
+		j = self.g.bfs(other, first.name)
+		self.assertEqual(j, 2)
 
 
 
