@@ -7,11 +7,11 @@ class GraphTests(unittest.TestCase):
 
 	def setUp(self):
 		# create nodes from JSON (stored in dict)
-		self.actor = {'name': 'Lance', 'age': 22, 'movies': ['movie1'], 'total_gross' : 1000}
+		self.actor = {'name': 'Lance', 'age': 22, 'movies': ['movie1'], 'total_gross' : 1000, 'json_class': 'actor'}
 		self.movie = {'name': 'movie1', 'box_office': 100, 'year': 2017, 'actors': ['Lance'],
-					  'wiki_page' : ''}
+					  'wiki_page' : '', 'json_class': 'movie'}
 		self.movie2 = {'name': 'movie2', 'box_office': 1000, 'year': 2016, 'actors': ['George'],
-					   'wiki_page' : ''}
+					   'wiki_page' : '', 'json_class': 'movie'}
 		self.actor_node = ActorNode(self.actor)
 		self.movie_node = MovieNode(self.movie)
 		self.movie_node2 = MovieNode(self.movie2)
@@ -63,11 +63,6 @@ class GraphTests(unittest.TestCase):
 	def test_add_neighbor_invalid(self):
 		self.actor_node.add_neighbor(self.movie_node2)
 		self.assertEqual(self.actor_node.neighbors, {})
-
-	# test trying to add a neighbor of invalid node type
-	def test_add_neighbor_invalid_type(self):
-		self.movie_node.add_neighbor(self.movie_node2)
-		self.assertEqual(self.movie_node.neighbors, {})
 
 	# test getting total grossing for an actor
 	def test_total_grossing_actor(self):
