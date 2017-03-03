@@ -79,6 +79,16 @@ class Graph(object):
 				self.dfs_helper(neighbor_node)
 
 	def bfs(self, node, target):
+		"""
+		do a BFS search for target starting from node
+
+		:param node: node to start search from
+
+		:param target: node to search for
+
+		:return: the depth of the search when node is found, ignore movie nodes
+
+		"""
 		# store a list of seen nodes and queue of active nodes
 		seen = set()
 		queue = [None, node]
@@ -89,8 +99,9 @@ class Graph(object):
 			if curr_node is None:
 				depth += 1
 				queue.insert(0, None)
+				# could not find in the graph
 				if queue[-1] is None:
-					return -1 # could not find in the graph
+					return -1
 				continue
 			# found target, return level
 			if curr_node.name == target:
@@ -126,28 +137,6 @@ class Graph(object):
 			movie = self.name_to_movie_node[movie_name].to_json()
 			d[1][movie_name] = movie
 		return d
-
-	def should_filter_actor(self, attr, val, actor_name, actor_json):
-		""" check if actor should be filtered out of query
-
-		:param attr: attribute to query on
-		:param val: value to query for
-		:param actor_name: name of actor to query
-		:param actor_json: actor data in dictionary format
-		:return: True if actor should be filtered, False otherwise
-
-		"""
-		if attr == 'name' and val not in actor_name:
-			return True
-		if attr == 'age' and val.isdigit() and int(val) != actor_json['age']:
-			return True
-		if attr == 'total_gross' and val.isdigit() and int(val) != actor_json['total_gross']:
-			return True
-		if attr == 'movies' and val not in actor_json['movies']:
-			return True
-		return False
-
-
 
 	def write_to_file(self, filename):
 		""" write JSON data to file
@@ -222,3 +211,34 @@ class Graph(object):
 			return []
 		actors = sorted(self.actor_vertices, key = lambda actor: actor.get_grossing_value())[-x:]
 		return [(actor.name, actor.get_grossing_value()) for actor in actors]
+
+	def get_hub_actors(self, i):
+		""" sorted actors by number of connections and return top i
+
+		:param i: number of hub actors to select
+		:return: list of top i actors in terms of connections
+
+		"""
+		if i == 0 or i < 0:
+			return []
+		return sorted([(actor.name, actor.get_actor_connections()) for actor in self.actor_vertices], key=lambda x: x[1])[-i:]
+
+	def get_gross_for_age_group(self, start, end):
+		""" get total gross value for all actors with age between start and end
+
+		:param start: start of age range
+		:param end: end of age range
+		:return: sum of gross value for all actors in this age range.
+
+		"""
+		return sum([actor.get_grossing_value() for actor in self.actor_vertices if start <= actor.age <= end])
+
+	def get_actors_in_age_group(self, start, end):
+		""" Get number of actors in age group
+		:param start: start of age range
+		:param end: end of age range
+		:return: number actors in this age range.
+
+		"""
+		return len([actor for actor in self.actor_vertices if start <= actor.age <= end])
+

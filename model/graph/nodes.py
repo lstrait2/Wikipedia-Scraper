@@ -43,6 +43,23 @@ class ActorNode(object):
 		"""
 		return self.total_gross
 
+	def get_actor_connections(self):
+		""" get number of actors this actor has worked with
+
+		:return: number of actors this actor has been in a movie with
+
+		"""
+		connections = set()
+		# iterate over all movies this actor is in
+		for movie_node in self.neighbors.keys():
+			# iterate over all actors in this movie
+			for actor_node in movie_node.neighbors:
+				if actor_node != self:
+					connections.add(actor_node)
+		return len(connections)
+
+
+
 	def to_json(self):
 		""" convert node to JSON format (stored as dictionary)
 		
