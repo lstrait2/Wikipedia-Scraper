@@ -59,14 +59,14 @@ def filter_movies_helper(query, movie_data):
 	# if boolean operations exist in query, handle each clause recursively (& takes precedence)
 	if '&' in query:
 		# split into 2 clauses along &
-		query1, query2 = query.split('&')
+		query1, query2 = query.split('&', 1)
 		# apply first query
 		temp_data = filter_movies_helper(query1, movie_data)
 		# apply second query to data returned by first query
 		return filter_movies_helper(query2, temp_data)
 	elif '|' in query:
 		# split into 2 clauses along |
-		query1, query2 = query.split('|')
+		query1, query2 = query.split('|', 1)
 		# apply first query
 		temp_data = filter_movies_helper(query1, movie_data)
 		if temp_data is None:
@@ -94,13 +94,13 @@ def filter_actors_helper(query, actor_data):
 		return None
 	# if boolean operations exist in query, handle each clause recursively (& takes precedence)
 	if '&' in query:
-		query1, query2 = query.split('&')
+		query1, query2 = query.split('&', 1)
 		# apply first query
 		temp_data = filter_actors_helper(query1, actor_data)
 		# apply second query to data returned by first query
 		return filter_actors_helper(query2, temp_data)
 	elif '|' in query:
-		query1, query2 = query.split('|')
+		query1, query2 = query.split('|', 1)
 		# apply first query
 		temp_data = filter_actors_helper(query1, actor_data)
 		if temp_data is None:
