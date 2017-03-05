@@ -1,5 +1,15 @@
-# refactor into node 
-class ActorNode(object):
+class Node(object):
+
+	def __init__(self, data):
+		""" Constructor
+
+		:param data: Json Data
+		"""
+		self.name = data['name']
+		self.neighbors = {}
+
+
+class ActorNode(Node):
 	""" Node class to represent an Actor
 
 	"""
@@ -10,11 +20,10 @@ class ActorNode(object):
 		:param actor: dictionary containing data on an actor
 
 		"""
-		self.name = actor['name']
+		super(ActorNode, self).__init__(actor)
 		self.age = actor['age']
 		self.movies = actor['movies']
 		self.total_gross = actor['total_gross']
-		self.neighbors = {} # map MovieNode to weight of edge
 
 	def add_neighbor(self, movie_node):
 		""" Add movie_node as neighbor if actor appeared in that movie
@@ -75,8 +84,7 @@ class ActorNode(object):
 		return actor
 
 
-
-class MovieNode(object):
+class MovieNode(Node):
 	""" Node class to represent an Actor
 
 	"""
@@ -87,12 +95,11 @@ class MovieNode(object):
 		:param movie: movie data stored in dictionary
 
 		"""
-		self.name = movie['name']
+		super(MovieNode, self).__init__(movie)
 		self.year = movie['year']
 		self.gross = movie['box_office']
 		self.actors = movie['actors']
 		self.wiki_page = movie['wiki_page']
-		self.neighbors = {} # map ActorNode to weight of edge
 
 	def add_neighbor(self, actor_node):
 		""" add actor_node as neighbor if actor acted in this movie
