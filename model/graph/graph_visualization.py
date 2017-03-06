@@ -24,22 +24,16 @@ def generate_bipartite_graph(graph):
 				nx_graph.add_node(actor_node2.name, type='actor')
 				nx_graph.add_edge(actor_node2.name, movie_node.name)
 				labels[actor_node2.name] = actor_node2.name + ": " + str(actor_node2.age)
-	actor_nodes = []
-	movie_nodes =[]
-	colors = []
+	colors = get_colors(nx_graph)
 	pos = {}
 	i = 0
 	j = 0
 	# set the color for each set and pull disjoint sets apart
 	for node, data in nx_graph.nodes(data=True):
 		if data['type'] == 'actor':
-			actor_nodes.append(node)
-			colors.append('r')
 			pos[node] = (1, i)
 			i += 1
 		else:
-			movie_nodes.append(node)
-			colors.append('g')
 			pos[node] = (2, j)
 			j += 1
 	# draw the graph using matplotlib
@@ -61,17 +55,7 @@ def generate_spring_graph_large(graph):
 			nx_graph.add_node(movie_node.name, type='movie')
 			nx_graph.add_edge(actor_node.name, movie_node.name)
 
-	actor_nodes = []
-	movie_nodes = []
-	colors = []
-	# change color of nodes.
-	for node, data in nx_graph.nodes(data=True):
-		if data['type'] == 'actor':
-			actor_nodes.append(node)
-			colors.append('r')
-		else:
-			movie_nodes.append(node)
-			colors.append('g')
+	colors = get_colors(nx_graph)
 	# draw the plot
 	nx.draw_spring(nx_graph, with_labels=False, node_color=colors)
 	plt.show()
@@ -103,17 +87,7 @@ def generate_spring_graph_small(graph):
 		nx_graph.add_node(movie_node.name, type='movie')
 		nx_graph.add_edge(bruce_willis.name, movie_node.name)
 
-	actor_nodes = []
-	movie_nodes = []
-	colors = []
-	# add colors to graph
-	for node, data in nx_graph.nodes(data=True):
-		if data['type'] == 'actor':
-			actor_nodes.append(node)
-			colors.append('r')
-		else:
-			movie_nodes.append(node)
-			colors.append('g')
+	colors = get_colors(nx_graph)
 	# draw plot.
 	nx.draw_spring(nx_graph, labels=labels, with_labels=True, node_color=colors)
 	plt.show()
@@ -140,20 +114,25 @@ def generate_spring_graph_subset(graph):
 				nx_graph.add_node(actor_node2.name, type='actor')
 				nx_graph.add_edge(actor_node2.name, movie_node.name)
 				labels[actor_node2.name] = actor_node2.name + ": " + str(actor_node2.age)
-	actor_nodes = []
-	movie_nodes = []
-	colors = []
-	# change colors
-	for node, data in nx_graph.nodes(data=True):
-		if data['type'] == 'actor':
-			actor_nodes.append(node)
-			colors.append('r')
-		else:
-			movie_nodes.append(node)
-			colors.append('g')
+	colors = get_colors(nx_graph)
 	# draw plot
 	nx.draw_spring(nx_graph, labels=labels, with_labels=True, node_color=colors)
 	plt.show()
+
+def get_colors(nx_graph):
+	""" Get colors for each node in graph
+
+	:param nx_graph: graph to consider
+	:return: list of node colors
+	"""
+	colors = []
+	# check each node for color.
+	for node, data in nx_graph.nodes(data=True):
+		if data['type'] == 'actor':
+			colors.append('r')
+		else:
+			colors.append('g')
+	return colors
 
 
 graph_data = Graph('model/data/data.json')
@@ -161,5 +140,4 @@ generate_bipartite_graph(graph_data)
 generate_spring_graph_large(graph_data)
 generate_spring_graph_small(graph_data)
 generate_spring_graph_subset(graph_data)
-
 
